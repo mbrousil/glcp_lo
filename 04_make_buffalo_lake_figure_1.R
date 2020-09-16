@@ -87,6 +87,12 @@ wa_lakes_agg <- wa_lakes_join %>%
 
 # Grab Buffalo Lake value (convert to log10 + 1)
 # Note that Buffalo Lake is ID 104321
+# Users wishing to find a Hylak_id for their particular
+# lake of interest could reference the HydroLAKES dataset
+# which provides shapefiles for all lake contained in the 
+# GLCP. Alternatively, users could find their lake by filtering
+# with centr_lat and centr_lon columns to identify a particular
+# lake based off the centroid's coordinates. 
 buffalo <- log10(
   as.numeric(
     filter(wa_lakes_agg, Hylak_id == 104321)[, "mean_sa"]
