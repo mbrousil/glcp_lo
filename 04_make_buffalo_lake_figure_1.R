@@ -6,6 +6,7 @@
 # 2. Makes figures 1a and 1b separately
 # 3. Combined figures 1a and 1b into a signle figure
 
+
 # Load necessary packages -------------------------------------------------
 
 library(data.table)
@@ -87,12 +88,11 @@ wa_lakes_agg <- wa_lakes_join %>%
 
 # Grab Buffalo Lake value (convert to log10 + 1)
 # Note that Buffalo Lake is ID 104321
-# Users wishing to find a Hylak_id for their particular
-# lake of interest could reference the HydroLAKES dataset
-# which provides shapefiles for all lake contained in the 
-# GLCP. Alternatively, users could find their lake by filtering
-# with centr_lat and centr_lon columns to identify a particular
-# lake based off the centroid's coordinates. 
+# Users wishing to find a Hylak_id for their particular lake of interest could
+# reference the HydroLAKES dataset, which provides shapefiles for all lakes
+# contained in the GLCP. Alternatively, users could find their lake by filtering
+# with centr_lat and centr_lon columns to identify a particular lake based off
+# the centroid's coordinates.
 buffalo <- log10(
   as.numeric(
     filter(wa_lakes_agg, Hylak_id == 104321)[, "mean_sa"]
@@ -101,7 +101,7 @@ buffalo <- log10(
 
 # Make a histogram of log10(mean SA + 1) for WA state, noting Buffalo Lake
 wa_lakes_fig <- wa_lakes_agg %>%
-  ggplot() + 
+  ggplot() +
   geom_histogram(aes(x = log10(mean_sa + 1)),
                  color = "black", fill = "grey", binwidth = 0.05) +
   geom_vline(aes(xintercept = buffalo), color = colors[3], linetype = 5,
@@ -122,7 +122,7 @@ buffalo_ts <- wa_lakes_join %>%
 
 # Plot time series of total, permanent, and seasonal water for Buffalo Lake
 time_series_plot <- ggplot(data = buffalo_ts) +
-  geom_point(aes(x = year, y = total_km2, color = colors[3]) , size = 5) +
+  geom_point(aes(x = year, y = total_km2, color = colors[3]), size = 5) +
   geom_point(aes(x = year, y = permanent_km2, color = colors[30]), size = 5) +
   geom_point(aes(x = year, y = seasonal_km2, color = colors[45]), size = 5) +
   ylab(bquote('Surface Area (km'^2*')')) +
@@ -148,10 +148,9 @@ time_series_plot_b <- annotate_figure(p = time_series_plot, fig.lab = "(b)",
                                       fig.lab.size = 25, fig.lab.face = "bold")
 
 # Combine into a single panel
-combined_figs <- ggarrange(wa_lakes_fig_a, time_series_plot_b, ncol = 2, nrow = 1,
-                           widths = c(4, 7))
+combined_figs <- ggarrange(wa_lakes_fig_a, time_series_plot_b,
+                           ncol = 2, nrow = 1, widths = c(4, 7))
 
 # Export final figure
 ggsave(filename = "../figures/buffalo_lake_figure.png", plot = combined_figs,
        dpi = 300, width = 17, height = 5, units = "in")
-

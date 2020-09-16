@@ -5,7 +5,8 @@
 # The workflow consists of 3 main steps:
 # 1. Load and z-score the necessary data
 # 2. 2. Build seasonal & total water area models & extract coeffs
-# 3. Create map figure 
+# 3. Create map figure
+
 
 # Load necessary packages -------------------------------------------------
 
@@ -38,9 +39,6 @@ glcp_hydrolakes_india <- inner_join(x = glcp, y = hydrolakes,
          total_zscore = scale(total_km2))
 
 
-
-
-
 # 2. Build seasonal & total water area models & extract coeffs ------------
 
 # Get a list of unique lakes and create filler data for for model outputs
@@ -50,29 +48,29 @@ beta_total <- rep(0, length(unique_lakes))
 
 
 # Get coefficients for z-scored lake area models
-# In the event of an error, we included tryCatch statements that enable 
-# the for loop to continue with the next unique_lake element without 
+# In the event of an error, we included tryCatch statements that enable
+# the for loop to continue with the next unique_lake element without
 # stopping the iteration
-for(i in 1:length(unique_lakes)){
-  
+for (i in 1:length(unique_lakes)) {
+
   lakes_filtered <- filter(glcp_hydrolakes_india, Hylak_id == unique_lakes[i])
-  
+
   tryCatch({
     lakes_filtered_seasonal_model <- lm(seasonal_zscore ~ year, data = lakes_filtered)
   }, error = function(e) {beta_seasonal[i] <- NA})
-  
-  if(!is.na(beta_seasonal[i])){
+
+  if (!is.na(beta_seasonal[i])) {
     beta_seasonal[i] <- coef(lakes_filtered_seasonal_model)[[2]]
   }
-  
+
   tryCatch({
     lakes_filtered_total_model <- lm(total_zscore ~ year, data = lakes_filtered)
   }, error = function(e) {beta_total[i] <- NA})
-  
-  if(!is.na(beta_total[i])){
+
+  if (!is.na(beta_total[i])) {
     beta_total[i] <- coef(lakes_filtered_total_model)[[2]]
   }
-  
+
 }
 
 # Condense coefficients into dataframe
@@ -107,7 +105,7 @@ india_map <- st_as_sf(maps::map(database = "world",
   st_cast(., "POLYGON")
 
 # Subset to main land area
-india_main <- india_map[14, ] 
+india_main <- india_map[14, ]
 
 # Confirm correct polygon
 plot(india_main)
@@ -147,6 +145,5 @@ map_total <- lakes_on_mainland %>%
         axis.text = element_text(size = 18))
 
 # Export the figure
-ggsave(filename = "../figures/total_india_map.png", plot = map_total, 
+ggsave(filename = "../figures/total_india_map.png", plot = map_total,
        device = "png", width = 18, height = 12, units = "in")
-

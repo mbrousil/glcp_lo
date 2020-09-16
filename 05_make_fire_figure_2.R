@@ -171,5 +171,5 @@ temporal_basin_fire_plot <- ggplot() +
 # Export the map
 ggsave(filename = "../figures/temporal_fire_basin_chloropleth_plot.png",
        plot = temporal_basin_fire_plot, device = "png",
-       height = 12, width = 12, units = "in", 
+       height = 12, width = 12, units = "in",
        dpi = 300)
